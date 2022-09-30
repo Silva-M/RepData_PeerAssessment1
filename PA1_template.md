@@ -7,17 +7,24 @@ output:
 
 ## Init directories and load required libraries
 
-```{r, echo=TRUE}
+
+```r
 setwd('/home/babl/coursera/Reproducible_Research/pa1')
 ```
 
 I'm from Russia and need to set Eng locale to correctly work with date/time functions.
 
-```{r, echo=TRUE}
+
+```r
 Sys.setlocale("LC_TIME","en_US.UTF-8")
 ```
 
-```{r, echo=TRUE}
+```
+## [1] "en_US.UTF-8"
+```
+
+
+```r
 library(data.table)
 library(ggplot2)
 library(grid)
@@ -27,7 +34,8 @@ library(knitr)
 
 ## Loading and preprocessing the data
 
-```{r,echo=TRUE}
+
+```r
 data<-data.table(read.csv("activity.csv", header=TRUE, na.strings="NA"))
 ```
 
@@ -37,7 +45,8 @@ data<-data.table(read.csv("activity.csv", header=TRUE, na.strings="NA"))
 
 I don't underastand, what I need to do (may be a language problem): a histogram of total number of steps (like in subtitle), or a histogram of mean total number (like in title), that's why I create both histogramms:
 
-```{r,echo=TRUE}
+
+```r
 total_steps_by_date <- aggregate(steps ~ date, data, 'sum', na.rm=TRUE)
 mean_steps_by_date <- aggregate(steps ~ date, data, 'mean', na.rm=TRUE)
 
@@ -52,40 +61,67 @@ plot2 <- ggplot(total_steps_by_date, aes(x=steps)) +
 grid.arrange(plot1,plot2,ncol=2)
 ```
 
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-1.png) 
+
 ### Calculate and report the mean and median total number of steps taken per day
 
-```{r, echo=TRUE}
+
+```r
 mean<-mean(total_steps_by_date$steps,na.rm=TRUE)
 median<-median(total_steps_by_date$steps,na.rm=TRUE)
 ```
-```{r, echo=TRUE}
+
+```r
 print(mean)
 ```
-```{r, echo=TRUE}
+
+```
+## [1] 10766.19
+```
+
+```r
 print(median)
 ```
 
-The mean of total number of steps taken per day are `r mean` and median are `r median`.
+```
+## [1] 10765
+```
+
+The mean of total number of steps taken per day are 1.0766189 &times; 10<sup>4</sup> and median are 10765.
 
 ## What is the average daily activity pattern?
 
-```{r, echo=TRUE}
+
+```r
 mean_steps_by_interval <- aggregate(steps ~ interval, data, 'mean', na.rm=TRUE)
 ggplot(mean_steps_by_interval, aes(x = interval, y = steps)) + geom_line()
 ```
 
+![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9-1.png) 
+
 Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
-```{r, echo=TRUE}
+
+```r
 mean_steps_by_interval[ which.max(mean_steps_by_interval$steps) ,]
+```
+
+```
+##     interval    steps
+## 104      835 206.1698
 ```
 
 ## Imputing missing values
 
 ### Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
 
-```{r, echo=TRUE}
+
+```r
 sum(is.na(data))
+```
+
+```
+## [1] 2304
 ```
 
 ### Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
@@ -96,7 +132,8 @@ I convert steps to Double type, because of mean is not integer.
 
 ### Create a new dataset that is equal to the original dataset but with the missing data filled in
 
-```{r, echo=TRUE}
+
+```r
 extrapolated_data <- data
 extrapolated_data$steps<-as.double(extrapolated_data$steps)
 for (i in 1:nrow(extrapolated_data)) {
@@ -108,7 +145,8 @@ for (i in 1:nrow(extrapolated_data)) {
 
 ### Make a histogram of the total number of steps taken each day
 
-```{r,echo=TRUE}
+
+```r
 ex_total_steps_by_date <- aggregate(steps ~ date, extrapolated_data, 'sum')
 ex_mean_steps_by_date <- aggregate(steps ~ date, extrapolated_data, 'mean')
 
@@ -123,30 +161,51 @@ plot2 <- ggplot(ex_total_steps_by_date, aes(x=steps)) +
 grid.arrange(plot1,plot2,ncol=2)
 ```
 
+![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-13-1.png) 
+
 ### Calculate and report the mean and median total number of steps taken per day.
 
 
-```{r, echo=TRUE}
+
+```r
 ex_mean<-mean(ex_total_steps_by_date$steps)
 ex_median<-median(ex_total_steps_by_date$steps)
 ```
-```{r, echo=TRUE}
+
+```r
 print(ex_mean)
 ```
-```{r, echo=TRUE}
+
+```
+## [1] 10766.19
+```
+
+```r
 print(ex_median)
 ```
 
-The mean of total number of steps taken per day are `r ex_mean` and median are `r ex_median`.
+```
+## [1] 10766.19
+```
+
+The mean of total number of steps taken per day are 1.0766189 &times; 10<sup>4</sup> and median are 1.0766189 &times; 10<sup>4</sup>.
 
 ### Do these values differ from the estimates from the first part of the assignment?
 
 Yes, median values are differ, but not mean values, because of we fill NA values with mean data:
 
-```{r, echo=TRUE, results = "asis"}
+
+```r
 differ_data<-data.frame(Calculation=c('Without NA', 'Extrapolated'), Mean=c(mean, ex_mean), Median=c(median, ex_median))
 kable(head(differ_data), format = "markdown")
 ```
+
+
+
+|Calculation  |     Mean|   Median|
+|:------------|--------:|--------:|
+|Without NA   | 10766.19| 10765.00|
+|Extrapolated | 10766.19| 10766.19|
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
@@ -154,7 +213,8 @@ I'm continue to work with extrapolated_data.
 
 Create new columns `wday` and `factorday` to extract weekend days from others:
 
-```{r, echo=TRUE}
+
+```r
 weekend <- c('saturday','sunday')
 extrapolated_data$wday<-tolower(weekdays(strptime(extrapolated_data$date, '%Y-%m-%d')))
 extrapolated_data$factorday <- factor((extrapolated_data$wday %in% weekend), labels=c('weekday','weekend'))
@@ -162,3 +222,5 @@ ex_steps_by_interval <- aggregate(steps ~ interval + factorday, extrapolated_dat
 
 ggplot(ex_steps_by_interval, aes(x = interval, y = steps)) + geom_line() + facet_grid(factorday ~ .) + labs(x="Interval", y="Number of steps")
 ```
+
+![plot of chunk unnamed-chunk-18](figure/unnamed-chunk-18-1.png) 
