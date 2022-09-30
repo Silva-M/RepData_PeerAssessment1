@@ -12,18 +12,6 @@ output:
 setwd('/home/babl/coursera/Reproducible_Research/pa1')
 ```
 
-I'm from Russia and need to set Eng locale to correctly work with date/time functions.
-
-
-```r
-Sys.setlocale("LC_TIME","en_US.UTF-8")
-```
-
-```
-## [1] "en_US.UTF-8"
-```
-
-
 ```r
 library(data.table)
 library(ggplot2)
@@ -43,7 +31,7 @@ data<-data.table(read.csv("activity.csv", header=TRUE, na.strings="NA"))
 
 ### Make a histogram of the total number of steps taken each day
 
-I don't underastand, what I need to do (may be a language problem): a histogram of total number of steps (like in subtitle), or a histogram of mean total number (like in title), that's why I create both histogramms:
+ The histograms are of total number of steps, or a histogram of mean total number:
 
 
 ```r
