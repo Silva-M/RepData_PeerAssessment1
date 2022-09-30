@@ -204,12 +204,6 @@ hr {
 <h2>Init directories and load required libraries</h2>
 
 <pre><code class="r">setwd(&#39;/home/babl/coursera/Reproducible_Research/pa1&#39;)
-</code></pre>
-
-<p>I&#39;m from Russia and need to set Eng locale to correctly work with date/time functions.</p>
-
-<pre><code class="r">Sys.setlocale(&quot;LC_TIME&quot;,&quot;en_US.UTF-8&quot;)
-</code></pre>
 
 <pre><code>## [1] &quot;en_US.UTF-8&quot;
 </code></pre>
@@ -229,8 +223,6 @@ library(knitr)
 <h2>What is mean total number of steps taken per day?</h2>
 
 <h3>Make a histogram of the total number of steps taken each day</h3>
-
-<p>I don&#39;t underastand, what I need to do (may be a language problem): a histogram of total number of steps (like in subtitle), or a histogram of mean total number (like in title), that&#39;s why I create both histogramms:</p>
 
 <pre><code class="r">total_steps_by_date &lt;- aggregate(steps ~ date, data, &#39;sum&#39;, na.rm=TRUE)
 mean_steps_by_date &lt;- aggregate(steps ~ date, data, &#39;mean&#39;, na.rm=TRUE)
